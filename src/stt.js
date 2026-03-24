@@ -25,17 +25,17 @@ const MODEL_REGISTRY = {
     precision: 75,
     speed: 98,
   },
-  'whisper-large-v3-turbo': {
-    name: 'Whisper Large v3 Turbo',
-    folder: 'sherpa-onnx-whisper-large-v3-turbo',
+  'whisper-turbo': {
+    name: 'Whisper Turbo',
+    folder: 'sherpa-onnx-whisper-turbo',
     type: 'whisper',
     files: {
-      encoder: 'large-v3-turbo-encoder.int8.onnx',
-      decoder: 'large-v3-turbo-decoder.int8.onnx',
-      tokens: 'large-v3-turbo-tokens.txt',
+      encoder: 'turbo-encoder.int8.onnx',
+      decoder: 'turbo-decoder.int8.onnx',
+      tokens: 'turbo-tokens.txt',
     },
-    downloadUrl: 'https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-whisper-large-v3-turbo.tar.bz2',
-    size: 857000000,
+    downloadUrl: 'https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-whisper-turbo.tar.bz2',
+    size: 563790207,
     description: 'Accurate on long segments — multilingual',
     languages: ['multilingual'],
     precision: 90,
@@ -111,7 +111,7 @@ async function initSTT(modelsDir) {
   }
 
   // Load all installed models (dual engine)
-  const loadOrder = ['parakeet-tdt-v3-int8', 'whisper-large-v3-turbo'];
+  const loadOrder = ['parakeet-tdt-v3-int8', 'whisper-turbo'];
   for (const modelId of loadOrder) {
     if (isModelInstalled(modelId)) {
       loadModel(modelId);
@@ -138,8 +138,8 @@ async function transcribe(audioSamples, durationSecs, switchThreshold = 10) {
 
   // Dual engine: pick model based on duration
   let modelId = activeModelId;
-  if (durationSecs >= switchThreshold && recognizers['whisper-large-v3-turbo']) {
-    modelId = 'whisper-large-v3-turbo';
+  if (durationSecs >= switchThreshold && recognizers['whisper-turbo']) {
+    modelId = 'whisper-turbo';
   } else if (recognizers['parakeet-tdt-v3-int8']) {
     modelId = 'parakeet-tdt-v3-int8';
   }

@@ -7,8 +7,10 @@ let appRef = null;
 let onMicSelected = null;
 let onApiKeySet = null;
 let onAutoCorrectionToggle = null;
+let onSwitchThresholdChange = null;
 let currentApiKey = '';
 let autoCorrectionEnabled = false;
+let switchThreshold = 10;
 
 function createMicIcon(color) {
   const size = 16;
@@ -52,8 +54,10 @@ function initTray(app, callbacks) {
   onMicSelected = callbacks.onMicSelected;
   onApiKeySet = callbacks.onApiKeySet;
   onAutoCorrectionToggle = callbacks.onAutoCorrectionToggle;
+  onSwitchThresholdChange = callbacks.onSwitchThresholdChange;
   currentApiKey = callbacks.currentApiKey || '';
   autoCorrectionEnabled = callbacks.autoCorrectionEnabled || false;
+  switchThreshold = callbacks.switchThreshold || 10;
 
   const icon = ICONS.idle();
   tray = new Tray(icon);
@@ -77,7 +81,7 @@ function buildMenu(micDevices) {
           if (onMicSelected) onMicSelected(d.deviceId, d.label);
         }
       }))
-    : [{ label: '(chargement...)', enabled: false }];
+    : [{ label: '(loading...)', enabled: false }];
 
   const apiKeyLabel = currentApiKey
     ? `Gemini key: ...${currentApiKey.slice(-6)}`
@@ -103,6 +107,19 @@ function buildMenu(micDevices) {
         log(`[Tray] Auto-correction: ${autoCorrectionEnabled ? 'ON' : 'OFF'}`);
         if (onAutoCorrectionToggle) onAutoCorrectionToggle(autoCorrectionEnabled);
       }
+    },
+    {
+      label: `Whisper switch: ${switchThreshold}s`,
+      submenu: [5, 8, 10, 15, 20, 30].map(val => ({
+        label: `${val}s`,
+        type: 'radio',
+        checked: val === switchThreshold,
+        click: () => {
+          switchThreshold = val;
+          log(`[Tray] Switch threshold: ${val}s`);
+          if (onSwitchThresholdChange) onSwitchThresholdChange(val);
+        }
+      }))
     },
     { type: 'separator' },
     { label: apiKeyLabel, enabled: false },

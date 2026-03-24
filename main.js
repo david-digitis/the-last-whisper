@@ -54,8 +54,13 @@ app.whenReady().then(async () => {
       setConfigValue('autoCorrection.enabled', enabled);
       log(`[TLW] Auto-correction: ${enabled ? 'ON' : 'OFF'}`);
     },
+    onSwitchThresholdChange: (seconds) => {
+      setConfigValue('switchThreshold', seconds);
+      log(`[TLW] Switch threshold: ${seconds}s`);
+    },
     currentApiKey: config.geminiApiKey || '',
     autoCorrectionEnabled: config.autoCorrection?.enabled || false,
+    switchThreshold: config.switchThreshold || 10,
   });
 
   // IPC: Gemini key from dialog
@@ -575,6 +580,10 @@ ipcMain.on('download-model', async (event, modelId) => {
       }
     });
     log(`[Models] Download complete: ${modelId}`);
+    // Load newly downloaded model into dual engine
+    const { loadModel } = require('./src/stt');
+    loadModel(modelId);
+    log(`[Models] Model loaded into dual engine: ${modelId}`);
     if (modelManagerWindow && !modelManagerWindow.isDestroyed()) {
       modelManagerWindow.webContents.send('download-complete', modelId);
     }

@@ -1,105 +1,110 @@
 # The Last Whisper
 
-**Speak. Translate. Write. All from your keyboard.**
+**Speak. Translate. Rewrite. Instantly, from any app.**
 
-A desktop dictaphone that transcribes locally in ~50ms, translates like DeepL, and writes professional emails — without sending your voice to the cloud.
+A push-to-talk dictaphone that transcribes your voice in ~50ms — locally, without sending a single byte of audio to the cloud. Need more? One click translates, corrects, or rewrites your text as a professional email via Gemini AI.
 
 ![Bubble recording](docs/bubble.png)
 
 ---
 
-## Why The Last Whisper?
+## Three tools in one shortcut
 
-Most voice-to-text tools send your audio to a server, add latency, and charge a subscription. The Last Whisper does everything locally and instantly:
+### Dictation — just talk, it types
 
-| | The Last Whisper | Cloud STT tools |
-|--|--|--|
-| **Transcription** | ~50ms, local, private | 1-3s, cloud, recorded |
-| **Translation** | Built-in, DeepL-like | Separate app |
-| **Email writing** | One click | Copy-paste into ChatGPT |
-| **Custom modes** | Fully configurable | Not available |
-| **Cost** | Free + your own Gemini key | $10-20/month |
+Hold `Ctrl+Space`, speak, release. Your words appear wherever your cursor is — any text field, any app. Transcription runs entirely on your machine using [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx), with no internet needed.
 
----
+**~50ms latency.** That's faster than your fingers leaving the keyboard.
 
-## How it works
+### Translation — like DeepL, but built-in
 
-### 1. Push-to-talk dictation
+Click the **Trad** button while dictating, or select existing text and double `Ctrl+C`. The Last Whisper detects the language and translates to/from your native language automatically.
 
-Hold `Ctrl+Space`, speak, release. Your words appear wherever your cursor is — in any app.
-
-During recording, action buttons slide in. Click one before releasing to process the text through AI:
-
-| Button | What it does |
-|--------|-------------|
-| *(none)* | Raw transcription, pasted as-is |
-| **Abc** | Fix spelling, grammar & punctuation |
-| **Trad** | Smart translate (see below) |
-| **Mail FR** | Professional French email |
-| **Mail EN** | Professional English email |
-
-### 2. AI overlay (double Ctrl+C)
-
-Select text anywhere, hit `Ctrl+C` twice quickly. An overlay pops up with the same action buttons — but applied to your selected text instead of dictation.
+You speak French and dictate in French? It translates to English.
+You select English text? It translates to French.
+No copy-paste into a separate app. No switching windows.
 
 ![Smart translate](docs/simple-translate-mode.png)
 
-### 3. Smart translate
+### Rewriting — correction, emails, custom prompts
 
-Works like DeepL: set your **native** and **target** languages in the tray menu. The Trad button figures out the direction automatically.
+During recording, action buttons slide in. Click one before you release to process your text:
 
-- You dictate in French? Translated to English.
-- You select English text? Translated to French.
-- Works with: French, English, German, Spanish, Italian, Portuguese, Dutch.
+| Button | What it does |
+|--------|-------------|
+| *(none)* | Raw transcription — pasted as-is |
+| **Abc** | Fix grammar, spelling & punctuation |
+| **Trad** | Smart translate (auto-detect direction) |
+| **Mail FR / EN** | Turn your dictation into a professional email |
+| **Your own** | Create custom modes with your own Gemini prompts |
 
-### 4. Custom action modes
+> Translation and rewriting use the Gemini API (free tier available). **Your voice never leaves your machine** — only the transcribed text is sent for processing.
 
-Don't need email buttons? Want a "Summarize" or "Make formal" mode instead? Open the modes editor and create your own — each mode is a label + a Gemini prompt.
+---
 
-![Action modes editor](docs/edit-actions.png)
+## AI overlay — for text you've already typed
+
+Select text anywhere, hit `Ctrl+C` twice quickly. An overlay appears with the same action buttons — translate, correct, or rewrite any existing text without re-typing it.
 
 ---
 
 ## Dual STT engine
 
-Two models, automatically selected based on recording duration:
+Two models, automatically selected based on recording length:
 
-| Model | Speed | Best for | Size |
-|-------|-------|----------|------|
-| **Parakeet TDT v3** | ~50-100ms | Short phrases, quick notes | 464 MB |
-| **Whisper Turbo** | ~2-3s | Long dictations, high accuracy | 538 MB |
+| Model | Speed | Best for |
+|-------|-------|----------|
+| **Parakeet TDT v3** | ~50-100ms | Short phrases, quick notes |
+| **Whisper Turbo** | ~2-3s | Long dictations, higher accuracy |
 
-The threshold is configurable from the tray menu (default: 10s). Short recordings get Parakeet's speed, long recordings get Whisper's accuracy.
+The switch threshold is adjustable from the tray menu (default: 10s).
 
 ![Model manager](docs/model-manager.png)
 
 ---
 
-## Everything in the tray
+## Custom action modes
 
-Right-click the system tray icon to access all settings. No config files to edit.
+The default modes (Abc, Mail FR, Mail EN) are just a starting point. Open the modes editor to create your own — each mode is a label + a Gemini prompt.
 
-![Tray menu](docs/tray-menu.png)
+Summarize. Make formal. Translate to Japanese. Fix code comments. Whatever you need.
 
-- Microphone selection
-- STT model management
-- Action modes editor
-- Gemini auto-correction toggle
-- Whisper switch threshold
-- Native & target language
-- Start at login
-- Gemini API key
+![Action modes editor](docs/edit-actions.png)
 
 ---
 
-## Download
+## Everything lives in the tray
 
-### Windows installer
+Right-click the system tray icon. No config files, no command line.
 
-Download the latest `.exe` from the [Releases](https://github.com/david-digitis/the-last-whisper/releases) page.
+![Tray menu](docs/tray-menu.png)
 
-- **Setup** (recommended): installs to your user folder, with start-at-login support
-- **Portable**: single .exe, no installation needed
+---
+
+## Download & install
+
+### Windows
+
+Download from the [Releases](https://github.com/david-digitis/the-last-whisper/releases) page:
+- **Setup** (recommended) — installs with start-at-login support
+- **Portable** — single `.exe`, no installation
+
+### Linux (Fedora / Wayland)
+
+Download the `.AppImage` from the [Releases](https://github.com/david-digitis/the-last-whisper/releases) page, then:
+
+```bash
+chmod +x The-Last-Whisper-*.AppImage
+./The-Last-Whisper-*.AppImage
+```
+
+Prerequisites:
+```bash
+sudo dnf install dotool fuse-libs
+sudo systemctl enable --now dotool.service
+sudo usermod -aG input $USER   # logout/login required
+```
+Install the GNOME extension **AppIndicator and KStatusNotifierItem Support** for the tray icon.
 
 ### From source
 
@@ -110,65 +115,44 @@ npm install
 npx electron .
 ```
 
-> **Note:** Do not launch from the VS Code integrated terminal — it sets `ELECTRON_RUN_AS_NODE` which breaks Electron. Use PowerShell or Windows Terminal.
+> Do not launch from the VS Code terminal — it sets `ELECTRON_RUN_AS_NODE` which prevents Electron from starting.
 
-### Build from source
+### You'll need
 
-```bash
-# Windows installer + portable
-npm run build:win
-
-# Linux AppImage
-npm run build:linux
-```
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) 18+ (for building from source)
-- A Gemini API key — free at [aistudio.google.com](https://aistudio.google.com/)
+- A **Gemini API key** for translation & rewriting — free at [aistudio.google.com](https://aistudio.google.com/). Dictation works without it.
 
 ---
 
 ## First launch
 
-An onboarding wizard walks you through:
-
-1. **Gemini API key** — paste your key (stored encrypted, never sent anywhere except Google's API)
-2. **Microphone** — pick your mic
-3. **Shortcuts** — `Ctrl+Space` to dictate, `Ctrl+C C` for AI overlay
-
-STT models are downloaded from the tray menu > STT Models (464-538 MB per model).
+The onboarding wizard asks for your Gemini API key (stored encrypted) and microphone. Then download STT models from the tray menu — 464-538 MB per model.
 
 ---
 
-## Linux
+## How private is it?
 
-Cross-platform support for Linux (Fedora/Wayland tested). See [LINUX-INSTRUCTIONS.md](LINUX-INSTRUCTIONS.md) for details.
-
-```bash
-sudo dnf install libX11-devel libXtst-devel libXinerama-devel ydotool gnome-shell-extension-appindicator
-```
+- **Voice & audio**: never leaves your machine. Transcription is 100% local.
+- **Transcribed text**: sent to Google's Gemini API only when you explicitly use translation or rewriting. Raw dictation doesn't touch the network.
+- **API key**: stored encrypted via Electron's safeStorage. Never logged, never exposed.
 
 ---
 
 ## Tech stack
 
-| Component | Technology |
-|-----------|-----------|
+| | |
+|--|--|
 | Framework | Electron 33 |
-| STT | sherpa-onnx-node (Parakeet TDT v3 + Whisper Turbo) |
-| AI | Gemini 2.5 Flash Lite (REST API) |
-| Hotkeys | uiohook-napi |
-| Audio | Web Audio API (MediaDevices + ScriptProcessor) |
-| Auto-paste | VBScript (Windows) / xdotool (Linux) |
-| Config | Electron safeStorage (encrypted) |
+| Local STT | sherpa-onnx-node (Parakeet TDT v3 + Whisper Turbo) |
+| AI processing | Gemini 2.5 Flash Lite |
+| Hotkeys | uiohook-napi (Windows) / evdev (Linux) |
+| Auto-paste | VBScript (Windows) / dotool (Linux) |
 
-Only **2 runtime dependencies**: `sherpa-onnx-node` and `uiohook-napi`.
+**2 runtime dependencies.** No Python, no Docker, no local LLM server.
 
 ---
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — [LICENSE](LICENSE)
 
 Built by David at [Digitis](https://digitis.cloud).

@@ -71,7 +71,7 @@ async function callGemini(prompt) {
   const apiKey = config.geminiApiKey;
 
   if (!apiKey) {
-    throw new Error('Cle API Gemini non configuree. Clic droit sur le tray > Configurer cle API.');
+    throw new Error('Gemini API key not configured. Right-click tray > Configure Gemini API key.');
   }
 
   const response = await fetch(GEMINI_URL, {

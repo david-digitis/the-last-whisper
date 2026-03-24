@@ -77,7 +77,7 @@ document.querySelectorAll('.action-btn').forEach(btn => {
     });
 
     // Show hint — recording continues until key release
-    statusEl.textContent = 'OK — relacher Ctrl+Space';
+    statusEl.textContent = 'OK — release Ctrl+Space';
     statusEl.classList.remove('hidden');
 
     // Send to main process

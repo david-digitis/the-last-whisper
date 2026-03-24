@@ -51,7 +51,7 @@ document.querySelectorAll('.action-btn').forEach(btn => {
       loadingEl.classList.add('hidden');
       resultAreaEl.classList.remove('hidden');
     } catch (err) {
-      loadingEl.textContent = 'Erreur: ' + err.message;
+      loadingEl.textContent = 'Error: ' + err.message;
     }
   });
 });

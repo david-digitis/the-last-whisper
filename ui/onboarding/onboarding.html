@@ -9,19 +9,19 @@
   <div class="container">
     <div class="header">
       <h1>The Last Whisper</h1>
-      <p class="subtitle">Dictaphone IA — Configuration rapide</p>
+      <p class="subtitle">AI Dictaphone — Quick setup</p>
     </div>
 
     <!-- Step 1: API Key -->
     <div id="step1" class="step active">
       <div class="step-number">1</div>
       <div class="step-content">
-        <h2>Cle API Gemini</h2>
-        <p>Necessaire pour la correction, la traduction et les emails.</p>
+        <h2>Gemini API Key</h2>
+        <p>Required for correction, translation and email features.</p>
         <input id="apiKey" type="text" placeholder="AIzaSy..." />
         <div class="step-actions">
-          <button class="btn-secondary" onclick="skipApiKey()">Plus tard</button>
-          <button class="btn-primary" onclick="saveApiKey()">Enregistrer</button>
+          <button class="btn-secondary" onclick="skipApiKey()">Later</button>
+          <button class="btn-primary" onclick="saveApiKey()">Save</button>
         </div>
         <div id="apiStatus" class="status"></div>
       </div>
@@ -32,10 +32,10 @@
       <div class="step-number">2</div>
       <div class="step-content">
         <h2>Microphone</h2>
-        <p>Selectionne le micro que tu utilises pour dicter.</p>
+        <p>Select the microphone you use for dictation.</p>
         <select id="micSelect"></select>
         <div class="step-actions">
-          <button class="btn-primary" onclick="saveMic()">Continuer</button>
+          <button class="btn-primary" onclick="saveMic()">Continue</button>
         </div>
       </div>
     </div>
@@ -44,19 +44,19 @@
     <div id="step3" class="step">
       <div class="step-number">3</div>
       <div class="step-content">
-        <h2>Pret !</h2>
+        <h2>Ready!</h2>
         <div class="shortcuts">
           <div class="shortcut-row">
             <kbd>Ctrl</kbd> + <kbd>Space</kbd>
-            <span>Maintenir pour dicter, relacher pour transcrire</span>
+            <span>Hold to dictate, release to transcribe</span>
           </div>
           <div class="shortcut-row">
             <kbd>Ctrl</kbd> + <kbd>C</kbd> <kbd>C</kbd>
-            <span>Double Ctrl+C sur une selection pour l'assistant IA</span>
+            <span>Double Ctrl+C on a selection for AI assistant</span>
           </div>
         </div>
         <div class="step-actions">
-          <button class="btn-primary" onclick="finish()">C'est parti !</button>
+          <button class="btn-primary" onclick="finish()">Let's go!</button>
         </div>
       </div>
     </div>

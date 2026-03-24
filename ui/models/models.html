@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+  <link rel="stylesheet" href="models.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Transcription models</h1>
+      <button class="close-btn" id="close-btn">&times;</button>
+    </div>
+
+    <div id="models-list" class="models-list">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="footer">
+      <p class="hint">Auto-switch from Parakeet to Whisper triggers when recording exceeds the configured threshold.</p>
+    </div>
+  </div>
+
+  <script src="models.js"></script>
+</body>
+</html>

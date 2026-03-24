@@ -20,7 +20,7 @@ const MODEL_REGISTRY = {
     },
     downloadUrl: 'https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8.tar.bz2',
     size: 486539264,
-    description: 'Rapide et precis — ideal pour segments courts',
+    description: 'Fast and accurate — ideal for short segments',
     languages: ['fr', 'en'],
     precision: 75,
     speed: 98,
@@ -36,7 +36,7 @@ const MODEL_REGISTRY = {
     },
     downloadUrl: 'https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-whisper-large-v3-turbo.tar.bz2',
     size: 857000000,
-    description: 'Precis sur segments longs — multilingue',
+    description: 'Accurate on long segments — multilingual',
     languages: ['multilingual'],
     precision: 90,
     speed: 45,
@@ -135,7 +135,7 @@ async function transcribe(audioSamples, durationSecs) {
 }
 
 function getActiveModelName() {
-  if (!activeModelId) return 'Aucun';
+  if (!activeModelId) return 'None';
   return MODEL_REGISTRY[activeModelId]?.name || activeModelId;
 }
 

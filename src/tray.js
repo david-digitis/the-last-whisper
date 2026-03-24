@@ -80,22 +80,22 @@ function buildMenu(micDevices) {
     : [{ label: '(chargement...)', enabled: false }];
 
   const apiKeyLabel = currentApiKey
-    ? `Cle Gemini: ...${currentApiKey.slice(-6)}`
-    : 'Cle Gemini: (non configuree)';
+    ? `Gemini key: ...${currentApiKey.slice(-6)}`
+    : 'Gemini key: (not configured)';
 
   const contextMenu = Menu.buildFromTemplate([
     { label: 'The Last Whisper v0.1.0', enabled: false },
     { type: 'separator' },
     { label: 'Microphone', submenu: micSubmenu },
     {
-      label: 'Modeles STT...',
+      label: 'STT Models...',
       click: () => {
         const { ipcMain } = require('electron');
         ipcMain.emit('open-model-manager');
       }
     },
     {
-      label: 'Auto-correction Gemini',
+      label: 'Gemini auto-correction',
       type: 'checkbox',
       checked: autoCorrectionEnabled,
       click: (menuItem) => {
@@ -107,12 +107,12 @@ function buildMenu(micDevices) {
     { type: 'separator' },
     { label: apiKeyLabel, enabled: false },
     {
-      label: 'Configurer cle API Gemini...',
+      label: 'Configure Gemini API key...',
       click: () => showApiKeyDialog(),
     },
     { type: 'separator' },
     {
-      label: 'Quitter',
+      label: 'Quit',
       click: () => appRef.quit(),
     }
   ]);
@@ -128,7 +128,7 @@ function showApiKeyDialog() {
     minimizable: false,
     maximizable: false,
     alwaysOnTop: true,
-    title: 'The Last Whisper — Cle API Gemini',
+    title: 'The Last Whisper — Gemini API Key',
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,
@@ -155,11 +155,11 @@ function showApiKeyDialog() {
 </style>
 </head>
 <body>
-  <h3>Cle API Gemini</h3>
+  <h3>Gemini API Key</h3>
   <input id="key" type="text" placeholder="AIzaSy..." value="${currentVal}" autofocus />
   <div class="row">
-    <button class="cancel" onclick="window.close()">Annuler</button>
-    <button class="save" onclick="save()">Enregistrer</button>
+    <button class="cancel" onclick="window.close()">Cancel</button>
+    <button class="save" onclick="save()">Save</button>
   </div>
   <script>
     const { ipcRenderer } = require('electron');

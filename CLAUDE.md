@@ -115,7 +115,10 @@ DIKTO/
 - **API Gemini** : Header `x-goog-api-key` (pas query string `?key=`)
 - **Auto-paste** : VBScript sur Windows (cscript), dotool sur Linux/Wayland
 - **Push-to-talk** : uiohook-napi sur Windows, evdev sur Linux (uiohook ne fonctionne pas sous Wayland)
-- **Sandbox Linux** : chrome-sandbox n'a pas le SUID bit dans l'AppImage, donc afterPack.js cree un wrapper qui passe --no-sandbox et ELECTRON_DISABLE_SANDBOX=1
+- **Sandbox Linux** : chrome-sandbox n'a pas le SUID bit dans l'AppImage, donc afterPack.js cree un wrapper qui passe --no-sandbox, --disable-dev-shm-usage et --no-zygote. Les memes flags sont aussi dans main.js via app.commandLine.appendSwitch
+- **tmpfs usrquota (Fedora 43+)** : Le kernel 6.x monte /dev/shm et /tmp avec usrquota, ce qui casse la creation de memoire partagee par les renderers Chromium forkes via zygote (erreur ESRCH). Le flag --no-zygote est OBLIGATOIRE
+- **Autostart Linux** : Electron app.setLoginItemSettings() ne fonctionne PAS sur Linux. Le tray gere directement ~/.config/autostart/dikto.desktop. En mode AppImage, utilise la variable d'environnement APPIMAGE pour le chemin Exec
+- **Hotkeys Linux** : evdev dans src/hotkeys-linux.js gere Ctrl+Space (push-to-talk), double Ctrl+C (overlay) et Ctrl+B (clipboard history)
 - **Focus** : Bubble non-focusable au show (showInactive). Overlay minimize avant insert pour refocus
 - **Multi-ecran** : Toutes les fenetres s'ouvrent sur l'ecran du curseur (screen.getCursorScreenPoint)
 - **IPC bridge** : `contextBridge.exposeInMainWorld('dikto', ...)` dans preload.js → `window.dikto.*` dans tous les UI
@@ -150,11 +153,11 @@ Theme unifie defini dans `ui/theme.css` :
 
 ```bash
 # Depuis un terminal systeme (PAS VS Code a cause de ELECTRON_RUN_AS_NODE)
-cd DIKTO
-npx electron .
+cd dikto
+npm start
 
-# Sous Wayland, si probleme de sandbox renderer:
-ELECTRON_DISABLE_SANDBOX=1 npx electron .
+# Equivalent a : unset ELECTRON_RUN_AS_NODE && electron .
+# Les flags --no-sandbox, --disable-dev-shm-usage, --no-zygote sont dans main.js
 ```
 
 ## Pre-requis Linux (Fedora/Wayland)
@@ -186,5 +189,5 @@ Stockage : `%APPDATA%/dikto/models/` (Win) / `~/.config/dikto/models/` (Linux)
 ## GitHub
 
 - Repo : https://github.com/david-digitis/dikto
-- Release v0.3.0 : .exe portable + installeur NSIS (Linux AppImage a ajouter)
+- Release v0.3.0 : .exe portable + installeur NSIS + AppImage Linux
 - Licence MIT

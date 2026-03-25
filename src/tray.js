@@ -1,4 +1,6 @@
-const { Tray, Menu, nativeImage, BrowserWindow } = require('electron');
+const { Tray, Menu, nativeImage, BrowserWindow, app } = require('electron');
+const fs = require('fs');
+const path = require('path');
 const { log } = require('./logger');
 
 let tray = null;
@@ -59,6 +61,59 @@ const ICONS = {
   busy: () => createMicIcon(0xddaa00),
 };
 
+// ─── Linux autostart via .desktop file ───────────────────────
+
+function getAutostartPath() {
+  return path.join(app.getPath('home'), '.config', 'autostart', 'dikto.desktop');
+}
+
+function isAutostartEnabled() {
+  if (process.platform !== 'linux') {
+    return app.getLoginItemSettings().openAtLogin;
+  }
+  try {
+    const content = fs.readFileSync(getAutostartPath(), 'utf-8');
+    return !content.includes('X-GNOME-Autostart-enabled=false') && !content.includes('Hidden=true');
+  } catch {
+    return false;
+  }
+}
+
+function setAutostartEnabled(enabled) {
+  if (process.platform !== 'linux') {
+    app.setLoginItemSettings({ openAtLogin: enabled });
+    return;
+  }
+  const autostartPath = getAutostartPath();
+  log(`[Autostart] setAutostartEnabled(${enabled}), path: ${autostartPath}`);
+  if (enabled) {
+    // In dev mode, execPath is the electron binary — need to add the app path
+    // In packaged mode (AppImage), process.argv[0] is the AppImage itself
+    const execPath = process.argv[0].includes('electron')
+      ? `${process.execPath} ${app.getAppPath()}`
+      : process.argv[0];
+    const content = `[Desktop Entry]
+Type=Application
+Name=Dikto
+Comment=AI dictaphone with local STT and text processing
+Exec=${execPath}
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+`;
+    fs.mkdirSync(path.dirname(autostartPath), { recursive: true });
+    fs.writeFileSync(autostartPath, content, 'utf-8');
+    log(`[Autostart] File written: ${autostartPath}`);
+  } else {
+    try {
+      fs.unlinkSync(autostartPath);
+      log(`[Autostart] File deleted: ${autostartPath}`);
+    } catch (err) {
+      log(`[Autostart] Delete failed: ${err.message}`);
+    }
+  }
+}
+
 function initTray(app, callbacks) {
   appRef = app;
   onMicSelected = callbacks.onMicSelected;
@@ -88,7 +143,10 @@ function initTray(app, callbacks) {
   });
 }
 
+let currentMicDevices = [];
+
 function buildMenu(micDevices) {
+  currentMicDevices = micDevices;
   const micSubmenu = micDevices.length > 0
     ? micDevices.map(d => ({
         label: d.label,
@@ -225,10 +283,11 @@ function buildMenu(micDevices) {
     {
       label: 'Start at login',
       type: 'checkbox',
-      checked: appRef.getLoginItemSettings().openAtLogin,
+      checked: isAutostartEnabled(),
       click: (menuItem) => {
-        appRef.setLoginItemSettings({ openAtLogin: menuItem.checked });
+        setAutostartEnabled(menuItem.checked);
         log(`[Tray] Start at login: ${menuItem.checked ? 'ON' : 'OFF'}`);
+        buildMenu(currentMicDevices);
       }
     },
     {

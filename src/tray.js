@@ -87,11 +87,10 @@ function setAutostartEnabled(enabled) {
   const autostartPath = getAutostartPath();
   log(`[Autostart] setAutostartEnabled(${enabled}), path: ${autostartPath}`);
   if (enabled) {
-    // In dev mode, execPath is the electron binary — need to add the app path
-    // In packaged mode (AppImage), process.argv[0] is the AppImage itself
-    const execPath = process.argv[0].includes('electron')
-      ? `${process.execPath} ${app.getAppPath()}`
-      : process.argv[0];
+    // APPIMAGE env var is set by the AppImage runtime to the real .AppImage path
+    // In dev mode, fall back to electron + app path
+    const execPath = process.env.APPIMAGE
+      || `${process.execPath} ${app.getAppPath()}`;
     const content = `[Desktop Entry]
 Type=Application
 Name=Dikto

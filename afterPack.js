@@ -24,7 +24,7 @@ exports.default = async function(context) {
   const wrapper = `#!/bin/bash
 HERE="$(dirname "$(readlink -f "$0")")"
 export ELECTRON_DISABLE_SANDBOX=1
-exec "$HERE/${execName}.bin" --no-sandbox "$@"
+exec "$HERE/${execName}.bin" --no-sandbox --disable-dev-shm-usage --no-zygote "$@"
 `;
   fs.writeFileSync(execPath, wrapper, { mode: 0o755 });
 

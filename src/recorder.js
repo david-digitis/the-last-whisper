@@ -11,23 +11,44 @@ let selectedDeviceId = null;
 function ensureAudioWindow() {
   if (audioWindow && !audioWindow.isDestroyed()) return;
 
+  log('[AudioWorker] Creating hidden audio window...');
+
   audioWindow = new BrowserWindow({
     show: false,
-    width: 1,
-    height: 1,
+    width: 100,
+    height: 100,
     webPreferences: {
       preload: path.join(__dirname, '..', 'preload-audio.js'),
       contextIsolation: true,
       nodeIntegration: false,
+      backgroundThrottling: false,
     }
   });
-
-  audioWindow.loadFile(path.join(__dirname, '..', 'ui', 'audio-worker.html'));
 
   // Capture renderer console messages into debug.log
   audioWindow.webContents.on('console-message', (event, level, message) => {
     log(`[AudioWorker] ${message}`);
   });
+
+  audioWindow.webContents.on('did-finish-load', () => {
+    log('[AudioWorker] did-finish-load OK');
+  });
+
+  audioWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+    logError(`[AudioWorker] did-fail-load: ${errorCode} ${errorDescription}`);
+  });
+
+  audioWindow.webContents.on('render-process-gone', (event, details) => {
+    logError(`[AudioWorker] render-process-gone: ${details.reason} (exit ${details.exitCode})`);
+  });
+
+  audioWindow.webContents.on('preload-error', (event, preloadPath, error) => {
+    logError(`[AudioWorker] preload-error: ${preloadPath} — ${error.message}`);
+  });
+
+  const htmlPath = path.join(__dirname, '..', 'ui', 'audio-worker.html');
+  log(`[AudioWorker] Loading: ${htmlPath}`);
+  audioWindow.loadFile(htmlPath);
 }
 
 function setAudioDevice(deviceId) {

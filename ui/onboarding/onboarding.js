@@ -52,8 +52,14 @@ function saveMic() {
 }
 
 function finish() {
-  if (window.dikto) {
-    window.dikto.onboardingDone();
+  console.log('[Onboarding] finish() called, window.dikto =', !!window.dikto);
+  try {
+    if (window.dikto) {
+      window.dikto.onboardingDone();
+      console.log('[Onboarding] onboardingDone() sent');
+    }
+  } catch (err) {
+    console.error('[Onboarding] finish error:', err.message);
   }
 }
 

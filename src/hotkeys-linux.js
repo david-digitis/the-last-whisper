@@ -7,6 +7,7 @@ const fs = require('fs');
 const { log } = require('./logger');
 
 // evdev key codes (from linux/input-event-codes.h)
+const KEY_B = 48;
 const KEY_C = 46;
 const KEY_SPACE = 57;
 const KEY_LEFTCTRL = 29;
@@ -66,7 +67,7 @@ function findKeyboard() {
  * Start listening for hotkeys on the evdev device.
  * Calls the provided callbacks on push-to-talk and double Ctrl+C events.
  */
-function startEvdevListener({ onRecordStart, onRecordStop, onDoubleCtrlC }) {
+function startEvdevListener({ onRecordStart, onRecordStop, onDoubleCtrlC, onClipboardToggle }) {
   const devPath = findKeyboard();
   if (!devPath) {
     log('[Hotkeys] ERROR: No keyboard found via evdev');
@@ -136,6 +137,11 @@ function startEvdevListener({ onRecordStart, onRecordStop, onDoubleCtrlC }) {
         } else {
           lastCtrlCTime = now;
         }
+      }
+
+      // Ctrl+B — clipboard history
+      if (code === KEY_B && value === 1 && ctrlDown && !recording) {
+        if (onClipboardToggle) onClipboardToggle();
       }
 
       readLoop();

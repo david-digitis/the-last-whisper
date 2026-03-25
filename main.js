@@ -1,9 +1,13 @@
 const { app, BrowserWindow, globalShortcut, ipcMain, screen, clipboard, nativeImage } = require('electron');
 const path = require('path');
 
-// Linux: disable sandbox (AppImage has no SUID chrome-sandbox)
+// Linux: disable sandbox and work around tmpfs usrquota ESRCH bug
+// on Fedora 43+ (kernel 6.x mounts /dev/shm and /tmp with usrquota,
+// which breaks Chromium renderer shared memory creation via zygote)
 if (process.platform === 'linux') {
   app.commandLine.appendSwitch('no-sandbox');
+  app.commandLine.appendSwitch('disable-dev-shm-usage');
+  app.commandLine.appendSwitch('no-zygote');
 }
 const { log, error: logError } = require('./src/logger');
 const { initTray, setTrayState, updateMicList } = require('./src/tray');
@@ -171,8 +175,26 @@ function showOnboarding() {
     }
   });
 
+  onboardingWindow.webContents.on('did-finish-load', () => {
+    log('[Onboarding] did-finish-load');
+    if (onboardingWindow && !onboardingWindow.isDestroyed() && !onboardingWindow.isVisible()) {
+      log('[Onboarding] Fallback show via did-finish-load');
+      onboardingWindow.show();
+    }
+  });
+  onboardingWindow.webContents.on('did-fail-load', (e, code, desc) => {
+    logError(`[Onboarding] did-fail-load: ${code} ${desc}`);
+  });
+  onboardingWindow.webContents.on('render-process-gone', (e, details) => {
+    logError(`[Onboarding] render-process-gone: ${details.reason} (exit ${details.exitCode})`);
+  });
+  onboardingWindow.webContents.on('console-message', (e, level, msg) => {
+    log(`[Onboarding:renderer] ${msg}`);
+  });
+
   onboardingWindow.loadFile('ui/onboarding/onboarding.html');
   onboardingWindow.once('ready-to-show', () => {
+    log('[Onboarding] ready-to-show');
     onboardingWindow.show();
     // Send mic list once audio worker is ready
     setTimeout(async () => {
@@ -183,7 +205,7 @@ function showOnboarding() {
     }, 1500);
   });
 
-  log('[Dikto] Onboarding shown');
+  log('[Dikto] Onboarding window created (waiting for ready-to-show)');
 }
 
 ipcMain.on('onboarding-save-api-key', (event, key) => {
@@ -238,6 +260,10 @@ function registerPushToTalkEvdev() {
     onDoubleCtrlC: () => {
       log('[Hotkey] Double Ctrl+C detected');
       handleDoubleCtrlC();
+    },
+    onClipboardToggle: () => {
+      log('[Hotkey] Ctrl+B — clipboard history');
+      toggleClipboardWindow();
     },
   });
   if (ok) {
@@ -738,31 +764,57 @@ ipcMain.handle('get-actions', () => {
 let modesEditorWindow = null;
 
 ipcMain.on('open-modes-editor', () => {
+  log('[ModesEditor] Opening...');
   if (modesEditorWindow && !modesEditorWindow.isDestroyed()) {
     modesEditorWindow.focus();
     return;
   }
 
-  const pos = getActiveDisplay().workArea;
+  try {
+    const pos = getActiveDisplay().workArea;
+    log(`[ModesEditor] Display workArea: ${JSON.stringify(pos)}`);
 
-  modesEditorWindow = new BrowserWindow({
-    width: 560,
-    height: 520,
-    x: pos.x + Math.round(pos.width / 2 - 280),
-    y: pos.y + Math.round(pos.height / 2 - 260),
-    frame: false,
-    resizable: false,
-    alwaysOnTop: true,
-    show: false,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true,
-      nodeIntegration: false,
-    }
-  });
+    modesEditorWindow = new BrowserWindow({
+      width: 560,
+      height: 520,
+      x: pos.x + Math.round(pos.width / 2 - 280),
+      y: pos.y + Math.round(pos.height / 2 - 260),
+      frame: false,
+      resizable: false,
+      alwaysOnTop: true,
+      show: false,
+      webPreferences: {
+        preload: path.join(__dirname, 'preload.js'),
+        contextIsolation: true,
+        nodeIntegration: false,
+      }
+    });
 
-  modesEditorWindow.loadFile('ui/modes-editor/modes-editor.html');
-  modesEditorWindow.once('ready-to-show', () => modesEditorWindow.show());
+    modesEditorWindow.webContents.on('did-finish-load', () => {
+      log('[ModesEditor] did-finish-load');
+      if (modesEditorWindow && !modesEditorWindow.isDestroyed() && !modesEditorWindow.isVisible()) {
+        log('[ModesEditor] Fallback show via did-finish-load');
+        modesEditorWindow.show();
+      }
+    });
+    modesEditorWindow.webContents.on('did-fail-load', (e, code, desc) => {
+      logError(`[ModesEditor] did-fail-load: ${code} ${desc}`);
+    });
+    modesEditorWindow.webContents.on('render-process-gone', (e, details) => {
+      logError(`[ModesEditor] render-process-gone: ${details.reason} (exit ${details.exitCode})`);
+    });
+    modesEditorWindow.webContents.on('console-message', (e, level, msg) => {
+      log(`[ModesEditor:renderer] ${msg}`);
+    });
+
+    modesEditorWindow.loadFile('ui/modes-editor/modes-editor.html');
+    modesEditorWindow.once('ready-to-show', () => {
+      log('[ModesEditor] ready-to-show');
+      modesEditorWindow.show();
+    });
+  } catch (err) {
+    logError(`[ModesEditor] Error: ${err.message}`);
+  }
 });
 
 ipcMain.on('close-modes-editor', () => {
@@ -788,31 +840,57 @@ ipcMain.handle('save-custom-actions', (event, actions) => {
 let modelManagerWindow = null;
 
 ipcMain.on('open-model-manager', () => {
+  log('[ModelManager] Opening...');
   if (modelManagerWindow && !modelManagerWindow.isDestroyed()) {
     modelManagerWindow.focus();
     return;
   }
 
-  const pos = getActiveDisplay().workArea;
+  try {
+    const pos = getActiveDisplay().workArea;
+    log(`[ModelManager] Display workArea: ${JSON.stringify(pos)}`);
 
-  modelManagerWindow = new BrowserWindow({
-    width: 520,
-    height: 480,
-    x: pos.x + Math.round(pos.width / 2 - 260),
-    y: pos.y + Math.round(pos.height / 2 - 240),
-    frame: false,
-    resizable: false,
-    alwaysOnTop: true,
-    show: false,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true,
-      nodeIntegration: false,
-    }
-  });
+    modelManagerWindow = new BrowserWindow({
+      width: 520,
+      height: 480,
+      x: pos.x + Math.round(pos.width / 2 - 260),
+      y: pos.y + Math.round(pos.height / 2 - 240),
+      frame: false,
+      resizable: false,
+      alwaysOnTop: true,
+      show: false,
+      webPreferences: {
+        preload: path.join(__dirname, 'preload.js'),
+        contextIsolation: true,
+        nodeIntegration: false,
+      }
+    });
 
-  modelManagerWindow.loadFile('ui/models/models.html');
-  modelManagerWindow.once('ready-to-show', () => modelManagerWindow.show());
+    modelManagerWindow.webContents.on('did-finish-load', () => {
+      log('[ModelManager] did-finish-load');
+      if (modelManagerWindow && !modelManagerWindow.isDestroyed() && !modelManagerWindow.isVisible()) {
+        log('[ModelManager] Fallback show via did-finish-load');
+        modelManagerWindow.show();
+      }
+    });
+    modelManagerWindow.webContents.on('did-fail-load', (e, code, desc) => {
+      logError(`[ModelManager] did-fail-load: ${code} ${desc}`);
+    });
+    modelManagerWindow.webContents.on('render-process-gone', (e, details) => {
+      logError(`[ModelManager] render-process-gone: ${details.reason} (exit ${details.exitCode})`);
+    });
+    modelManagerWindow.webContents.on('console-message', (e, level, msg) => {
+      log(`[ModelManager:renderer] ${msg}`);
+    });
+
+    modelManagerWindow.loadFile('ui/models/models.html');
+    modelManagerWindow.once('ready-to-show', () => {
+      log('[ModelManager] ready-to-show');
+      modelManagerWindow.show();
+    });
+  } catch (err) {
+    logError(`[ModelManager] Error: ${err.message}`);
+  }
 });
 
 ipcMain.on('close-models', () => {

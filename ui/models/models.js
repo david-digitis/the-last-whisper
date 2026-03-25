@@ -2,16 +2,16 @@ const listEl = document.getElementById('models-list');
 
 // Close button
 document.getElementById('close-btn').addEventListener('click', () => {
-  window.tlw.closeModels();
+  window.dikto.closeModels();
 });
 
 // Escape to close
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') window.tlw.closeModels();
+  if (e.key === 'Escape') window.dikto.closeModels();
 });
 
 async function loadModels() {
-  const models = await window.tlw.listModels();
+  const models = await window.dikto.listModels();
   listEl.innerHTML = '';
 
   models.forEach(model => {
@@ -57,7 +57,7 @@ async function loadModels() {
       delBtn.className = 'btn-delete';
       delBtn.textContent = 'Delete';
       delBtn.addEventListener('click', async () => {
-        await window.tlw.deleteModel(model.id);
+        await window.dikto.deleteModel(model.id);
         loadModels();
       });
       actionsEl.appendChild(delBtn);
@@ -93,19 +93,19 @@ function startDownload(modelId, actionsEl) {
   cancelBtn.addEventListener('click', () => loadModels());
   actionsEl.appendChild(cancelBtn);
 
-  window.tlw.downloadModel(modelId);
+  window.dikto.downloadModel(modelId);
 }
 
 // Listen for download progress
-if (window.tlw) {
-  window.tlw.onDownloadProgress((event, modelId, percent, speedStr) => {
+if (window.dikto) {
+  window.dikto.onDownloadProgress((event, modelId, percent, speedStr) => {
     const fill = document.getElementById(`progress-${modelId}`);
     const text = document.getElementById(`progress-text-${modelId}`);
     if (fill) fill.style.width = `${percent}%`;
     if (text) text.textContent = `${percent.toFixed(0)}% — ${speedStr}`;
   });
 
-  window.tlw.onDownloadComplete((event, modelId) => {
+  window.dikto.onDownloadComplete((event, modelId) => {
     loadModels();
   });
 }

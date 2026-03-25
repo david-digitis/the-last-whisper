@@ -43,9 +43,9 @@ app.whenReady().then(async () => {
   const config = getConfig();
   try {
     await initSTT(config.modelsPath);
-    log(`[TLW] STT engine initialized (threshold: ${config.switchThreshold}s)`);
+    log(`[Dikto] STT engine initialized (threshold: ${config.switchThreshold}s)`);
   } catch (err) {
-    logError('[TLW] STT init failed:', err.message);
+    logError('[Dikto] STT init failed:', err.message);
   }
 
   const { setConfigValue } = require('./src/config');
@@ -55,24 +55,24 @@ app.whenReady().then(async () => {
     onMicSelected: (deviceId, label) => {
       setAudioDevice(deviceId);
       setConfigValue('audioDeviceId', deviceId);
-      log(`[TLW] Microphone changed to: ${label}`);
+      log(`[Dikto] Microphone changed to: ${label}`);
     },
     onApiKeySet: (key) => {
       setConfigValue('geminiApiKey', key);
       setApiKeyDisplay(key);
-      log('[TLW] Gemini API key saved');
+      log('[Dikto] Gemini API key saved');
     },
     onAutoCorrectionToggle: (enabled) => {
       setConfigValue('autoCorrection.enabled', enabled);
-      log(`[TLW] Auto-correction: ${enabled ? 'ON' : 'OFF'}`);
+      log(`[Dikto] Auto-correction: ${enabled ? 'ON' : 'OFF'}`);
     },
     onSwitchThresholdChange: (seconds) => {
       setConfigValue('switchThreshold', seconds);
-      log(`[TLW] Switch threshold: ${seconds}s`);
+      log(`[Dikto] Switch threshold: ${seconds}s`);
     },
     onLanguageChange: (key, lang) => {
       setConfigValue(key, lang);
-      log(`[TLW] ${key}: ${lang}`);
+      log(`[Dikto] ${key}: ${lang}`);
     },
     onClipboardHistoryToggle: (enabled) => {
       setConfigValue('clipboardHistory.enabled', enabled);
@@ -98,14 +98,14 @@ app.whenReady().then(async () => {
   ipcMain.on('set-gemini-key', (event, key) => {
     setConfigValue('geminiApiKey', key);
     setApiKeyDisplay(key);
-    log('[TLW] Gemini API key saved');
+    log('[Dikto] Gemini API key saved');
   });
 
   // Enumerate audio devices
   setTimeout(async () => {
     try {
       const devices = await listAudioDevices();
-      log(`[TLW] Found ${devices.length} audio input devices`);
+      log(`[Dikto] Found ${devices.length} audio input devices`);
       devices.forEach((d, i) => log(`  [${i}] ${d.label}`));
 
       const config = getConfig();
@@ -117,12 +117,12 @@ app.whenReady().then(async () => {
 
       if (savedDeviceId) {
         setAudioDevice(savedDeviceId);
-        log(`[TLW] Using saved mic: ${devices.find(d => d.deviceId === savedDeviceId)?.label || '?'}`);
+        log(`[Dikto] Using saved mic: ${devices.find(d => d.deviceId === savedDeviceId)?.label || '?'}`);
       }
 
       updateMicList(devicesWithSelection);
     } catch (err) {
-      logError('[TLW] Device enumeration failed:', err.message);
+      logError('[Dikto] Device enumeration failed:', err.message);
     }
   }, 1000);
 
@@ -142,8 +142,8 @@ app.whenReady().then(async () => {
     showOnboarding();
   }
 
-  log('[TLW] Dikto is ready');
-  log('[TLW] Hold Ctrl+Space to record, release to transcribe');
+  log('[Dikto] Dikto is ready');
+  log('[Dikto] Hold Ctrl+Space to record, release to transcribe');
 });
 
 // ─── Onboarding ───────────────────────────────────────────────
@@ -183,7 +183,7 @@ function showOnboarding() {
     }, 1500);
   });
 
-  log('[TLW] Onboarding shown');
+  log('[Dikto] Onboarding shown');
 }
 
 ipcMain.on('onboarding-save-api-key', (event, key) => {
@@ -306,9 +306,9 @@ function beginRecording() {
     startRecording();
     showBubble();
     playStart();
-    log('[TLW] Recording started');
+    log('[Dikto] Recording started');
   } catch (err) {
-    logError('[TLW] Recording start error:', err.message);
+    logError('[Dikto] Recording start error:', err.message);
     playError();
     isRecording = false;
     setTrayState('idle');
@@ -321,7 +321,7 @@ async function finishRecording() {
   isProcessing = true;
 
   const duration = (Date.now() - recordingStartTime) / 1000;
-  log(`[TLW] Stopping recording (${duration.toFixed(1)}s)...`);
+  log(`[Dikto] Stopping recording (${duration.toFixed(1)}s)...`);
   setTrayState('busy');
 
   // Use action if one was clicked during recording. No waiting.
@@ -330,38 +330,38 @@ async function finishRecording() {
   hideBubble();
 
   try {
-    log('[TLW] Stopping audio...');
+    log('[Dikto] Stopping audio...');
     const audioBuffer = await stopRecording();
 
     if (!audioBuffer || audioBuffer.length === 0) {
-      log('[TLW] No audio captured');
+      log('[Dikto] No audio captured');
       setTrayState('idle');
       return;
     }
 
     const sampleCount = audioBuffer.length;
-    log(`[TLW] Audio: ${sampleCount} samples (${(sampleCount / 16000).toFixed(1)}s)`);
+    log(`[Dikto] Audio: ${sampleCount} samples (${(sampleCount / 16000).toFixed(1)}s)`);
 
     if (duration < 0.3) {
-      log('[TLW] Too short, skipping');
+      log('[Dikto] Too short, skipping');
       setTrayState('idle');
       return;
     }
 
     const samples = audioBuffer instanceof Float32Array ? audioBuffer : new Float32Array(audioBuffer);
 
-    log('[TLW] Transcribing...');
+    log('[Dikto] Transcribing...');
     const t0 = Date.now();
     const text = await transcribe(samples, duration, getConfig().switchThreshold);
-    log(`[TLW] STT took ${Date.now() - t0}ms`);
+    log(`[Dikto] STT took ${Date.now() - t0}ms`);
 
     if (!text || text.trim().length === 0) {
-      log('[TLW] Empty transcription, skipping');
+      log('[Dikto] Empty transcription, skipping');
       setTrayState('idle');
       return;
     }
 
-    log(`[TLW] Result: "${text.substring(0, 120)}${text.length > 120 ? '...' : ''}"`);
+    log(`[Dikto] Result: "${text.substring(0, 120)}${text.length > 120 ? '...' : ''}"`);
 
     let finalText = text;
 
@@ -378,7 +378,7 @@ async function finishRecording() {
     setTrayState('idle');
 
   } catch (err) {
-    logError('[TLW] Error:', err.message);
+    logError('[Dikto] Error:', err.message);
     playError();
     setTrayState('idle');
   } finally {

@@ -1,6 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld('tlw', {
+contextBridge.exposeInMainWorld('dikto', {
   // Bubble actions
   sendAction: (action) => ipcRenderer.send('bubble-action', action),
 

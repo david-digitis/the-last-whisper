@@ -1,6 +1,6 @@
 # Rapport d'analyse - Developer Advocate
 
-**Projet** : `c:/Users/David/JSCODE-PROJECT/THE-LAST-WHISPER`
+**Projet** : `c:/Users/David/JSCODE-PROJECT/DIKTO`
 **Date** : 2026-03-25
 **Agent** : specialized-developer-advocate
 **Objectif** : Strategie de lancement open source et maximisation de l'adoption communautaire
@@ -9,7 +9,7 @@
 
 ## Resume
 
-The Last Whisper est un projet techniquement solide avec un positionnement unique : c'est le **seul dictaphone desktop open source qui combine STT 100% local, traduction integree, AI overlay systeme et clipboard manager dans un seul binaire**. Le repo a ete cree hier (2026-03-24) avec 0 stars et aucune optimisation GitHub (pas de topics, description courte, pas de community files). La fenetre de lancement est excellente : le marche des alternatives open source a Wispr Flow explose depuis 2025, mais aucun concurrent ne couvre Windows+Linux avec cette completude fonctionnelle.
+Dikto est un projet techniquement solide avec un positionnement unique : c'est le **seul dictaphone desktop open source qui combine STT 100% local, traduction integree, AI overlay systeme et clipboard manager dans un seul binaire**. Le repo a ete cree hier (2026-03-24) avec 0 stars et aucune optimisation GitHub (pas de topics, description courte, pas de community files). La fenetre de lancement est excellente : le marche des alternatives open source a Wispr Flow explose depuis 2025, mais aucun concurrent ne couvre Windows+Linux avec cette completude fonctionnelle.
 
 ---
 
@@ -26,7 +26,7 @@ Version alternative plus courte pour les conversations :
 
 Aucun concurrent ne fait les 3 choses a la fois :
 
-| Capacite | The Last Whisper | Freeflow | Amical | Tambourine Voice | Whishpy |
+| Capacite | Dikto | Freeflow | Amical | Tambourine Voice | Whishpy |
 |----------|:---:|:---:|:---:|:---:|:---:|
 | STT 100% local | OUI | OUI | OUI | OUI (cloud opt.) | NON (cloud) |
 | Push-to-talk hotkey | OUI | OUI | OUI | OUI | OUI |
@@ -40,7 +40,7 @@ Aucun concurrent ne fait les 3 choses a la fois :
 | Taille binaire | 76-114 MB | ~50 MB | ~200 MB | ~100 MB | ~50 MB |
 | Deps runtime | 2 | Varies | Beaucoup | Plusieurs | Python |
 
-**Le differenciateur-cle : The Last Whisper n'est pas "juste un dictaphone". C'est un productivity layer vocal complet.**
+**Le differenciateur-cle : Dikto n'est pas "juste un dictaphone". C'est un productivity layer vocal complet.**
 
 ### Categorie GitHub
 
@@ -57,21 +57,21 @@ Pas de categorie formelle sur GitHub, mais le positionnement SEO doit cibler : *
 - **Stack** : Swift (macOS only)
 - **Forces** : Hype "alternative a Wispr Flow", createur connu (fondateur Hack Club), community forte
 - **Faiblesses** : macOS seulement, pas de traduction, pas d'overlay
-- **Menace pour TLW** : Faible -- pas le meme OS
+- **Menace pour Dikto** : Faible -- pas le meme OS
 
 #### Amical (1,039 stars) - amicalhq/amical
 - **Cree** : Mai 2025
 - **Stack** : TypeScript, Electron + Next.js + Expo
 - **Forces** : Feature-rich, meeting notes, MCP integration, Ollama support, bonne doc
 - **Faiblesses** : Complexe (Next.js + Expo), pas de traduction integree, pas d'overlay systeme
-- **Menace pour TLW** : Moderee -- meme stack Electron mais approche "AI note-taking" vs "voice productivity"
+- **Menace pour Dikto** : Moderee -- meme stack Electron mais approche "AI note-taking" vs "voice productivity"
 
 #### Tambourine Voice (320 stars) - kstonekuan/tambourine-voice
 - **Cree** : Novembre 2025
 - **Stack** : Rust + Tauri + TypeScript
 - **Forces** : Cross-platform (macOS+Windows), Tauri = binaire leger, AGPL
 - **Faiblesses** : AGPL (repoussant pour certains), pas de Linux, pas de traduction
-- **Menace pour TLW** : Moderee -- meme cible Windows
+- **Menace pour Dikto** : Moderee -- meme cible Windows
 
 #### Dial8 (183 stars) - liamadsr/dial8-open-source
 - **Cree** : Juillet 2025
@@ -97,13 +97,13 @@ Pas de categorie formelle sur GitHub, mais le positionnement SEO doit cibler : *
     Linux         |                  |                   |
                   |                  |  << VIDE >>       |
                   +------------------+-------------------+
-    Win + Linux   |                  | THE LAST WHISPER  |
+    Win + Linux   |                  | DIKTO             |
     + AI overlay  |                  | + traduction      |
     + clipboard   |                  | + clipboard mgr   |
                   +------------------+-------------------+
 ```
 
-**The Last Whisper occupe un carre vide.** C'est le seul a couvrir Windows + Linux + traduction + overlay + clipboard. C'est un positionnement defensible.
+**Dikto occupe un carre vide.** C'est le seul a couvrir Windows + Linux + traduction + overlay + clipboard. C'est un positionnement defensible.
 
 ---
 
@@ -115,7 +115,7 @@ Pas de categorie formelle sur GitHub, mais le positionnement SEO doit cibler : *
 
 | Plateforme | Subreddit / Section | Angle | Timing |
 |------------|-------------------|-------|--------|
-| **Hacker News** | Show HN | "Show HN: The Last Whisper -- local voice typing with AI translation overlay (open source)" | Mardi ou mercredi, 9h-11h EST |
+| **Hacker News** | Show HN | "Show HN: Dikto -- local voice typing with AI translation overlay (open source)" | Mardi ou mercredi, 9h-11h EST |
 | **Reddit r/opensource** | Post | "I built an open-source voice productivity app -- local STT + AI translation + clipboard manager" | Lundi-mercredi matin |
 | **Reddit r/linux** | Post | "Push-to-talk voice dictation that actually works on Wayland (Fedora + GNOME)" | Vendredi (vibe communautaire) |
 
@@ -142,14 +142,14 @@ Pas de categorie formelle sur GitHub, mais le positionnement SEO doit cibler : *
 ### 3.2 Structure d'un post Hacker News optimal
 
 ```
-Title: Show HN: The Last Whisper -- local voice typing + AI translation overlay (open source)
+Title: Show HN: Dikto -- local voice typing + AI translation overlay (open source)
 
 Body (premier commentaire du createur) :
 
 Hi HN, I built this because I was tired of switching between three apps:
 a voice dictation tool, DeepL, and a clipboard manager.
 
-The Last Whisper is a push-to-talk dictaphone that runs entirely locally
+Dikto is a push-to-talk dictaphone that runs entirely locally
 (sherpa-onnx with Parakeet TDT v3 for ~50ms latency). It works system-wide:
 hold Ctrl+Space in any app, speak, release -- your words appear at the cursor.
 
@@ -191,7 +191,7 @@ After months of testing every voice-to-text tool I could find, I got
 frustrated: Wispr Flow is macOS-only and paid. DeepL is a separate window.
 Clipboard managers don't understand context. Nothing worked on Linux/Wayland.
 
-So I built The Last Whisper:
+So I built Dikto:
 
 **What it does:**
 - Hold Ctrl+Space, speak, release -> text appears at your cursor (~50ms)
@@ -279,8 +279,8 @@ Ajouter en haut du README, juste apres le titre :
 [![Windows](https://img.shields.io/badge/platform-Windows%2011-blue.svg)]()
 [![Linux](https://img.shields.io/badge/platform-Linux%20Wayland-orange.svg)]()
 [![Electron](https://img.shields.io/badge/Electron-33-47848F.svg?logo=electron)]()
-[![GitHub release](https://img.shields.io/github/v/release/david-digitis/the-last-whisper)](https://github.com/david-digitis/the-last-whisper/releases)
-[![GitHub stars](https://img.shields.io/github/stars/david-digitis/the-last-whisper?style=social)](https://github.com/david-digitis/the-last-whisper)
+[![GitHub release](https://img.shields.io/github/v/release/david-digitis/dikto)](https://github.com/david-digitis/dikto/releases)
+[![GitHub stars](https://img.shields.io/github/stars/david-digitis/dikto?style=social)](https://github.com/david-digitis/dikto)
 ```
 
 ### 4.4 Autres optimisations repo
@@ -370,8 +370,8 @@ body:
       label: Logs (if available)
       description: |
         Check debug.log in:
-        - Windows: %APPDATA%/the-last-whisper/debug.log
-        - Linux: ~/.config/the-last-whisper/debug.log
+        - Windows: %APPDATA%/dikto/debug.log
+        - Linux: ~/.config/dikto/debug.log
       render: shell
 ```
 
@@ -414,14 +414,14 @@ body:
 ### 5.3 CONTRIBUTING.md
 
 ```markdown
-# Contributing to The Last Whisper
+# Contributing to Dikto
 
 Thanks for your interest in contributing!
 
 ## Quick start
 
-git clone https://github.com/david-digitis/the-last-whisper.git
-cd the-last-whisper
+git clone https://github.com/david-digitis/dikto.git
+cd dikto
 npm install
 npx electron .
 
@@ -511,7 +511,7 @@ Ces issues attirent des contributeurs tout en ajoutant de la valeur reelle :
 
 | # | Risque | Impact | Mitigation |
 |---|--------|--------|------------|
-| 9 | **Nom "The Last Whisper"** -- poetique mais pas descriptif | Faible -- le nom est memorable, ca compense | Compenser avec une description repo tres explicite (fait ci-dessus) |
+| 9 | **Nom "Dikto"** -- poetique mais pas descriptif | Faible -- le nom est memorable, ca compense | Compenser avec une description repo tres explicite (fait ci-dessus) |
 | 10 | **Pas de video/GIF demo** | Fort pour la conversion | Un GIF de 15 secondes montrant Ctrl+Space -> parle -> texte apparait vaut 1000 mots de README. **Priorite haute.** |
 
 ---

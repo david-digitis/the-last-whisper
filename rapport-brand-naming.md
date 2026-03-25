@@ -1,6 +1,6 @@
 # Rapport Brand Naming - Brand Guardian
 
-**Projet** : c:\Users\David\JSCODE-PROJECT\THE-LAST-WHISPER
+**Projet** : c:\Users\David\JSCODE-PROJECT\DIKTO
 **Date** : 2026-03-25
 **Agent** : Brand Guardian (design-brand-guardian)
 
@@ -8,7 +8,7 @@
 
 ## Resume
 
-"The Last Whisper" est un nom placeholder charmant mais contre-productif : il evoque la fin, le murmure qui s'eteint, voire un jeu video fantasy -- tout l'inverse de la promesse d'un outil de productivite vocale rapide, puissant et local. L'application merite un nom qui communique instantanement sa triple valeur : **voix vers texte**, **intelligence**, **vitesse**. Ce rapport propose 20 candidats verifies sur GitHub et npm, classes par famille semantique, avec un Top 3 argumente.
+"The Last Whisper" etait le nom placeholder initial. Ce rapport a analyse 20 candidats et recommande **Dikto** (du latin *dictare*) -- le nom finalement retenu. L'application merite un nom qui communique instantanement sa triple valeur : **voix vers texte**, **intelligence**, **vitesse**. Les 20 candidats ont ete verifies sur GitHub et npm, classes par famille semantique, avec un Top 3 argumente.
 
 ---
 
@@ -149,7 +149,7 @@
 
 ### 2. Court terme : Migration de marque
 
-- Renommer le repo GitHub `the-last-whisper` -> `[nouveau-nom]`
+- Renommer le repo GitHub `the-last-whisper` -> `dikto` (fait)
 - Mettre a jour `package.json` (name, description)
 - Mettre a jour le README, le titre de la fenetre Electron, le tray tooltip
 - Creer un logo minimal (icone + wordmark)
@@ -169,7 +169,7 @@
 Ce rapport est un deliverable de **brand naming** et non un audit technique. Il n'y a pas de fichiers a corriger mais des decisions a prendre. L'agent local du projet devra :
 
 1. Obtenir la decision de David sur le nom final
-2. Effectuer un renommage global (`grep -r "Last Whisper"` dans le projet pour trouver toutes les references)
+2. Effectuer un renommage global (`grep -r "Last Whisper"` dans le projet pour trouver toutes les references) (fait)
 3. Mettre a jour `package.json`, `README.md`, les titres de fenetres Electron et le tray menu
 4. Ne PAS renommer le repo GitHub tant que David n'a pas reserve le nom sur npm et verifie le domaine
 

@@ -6,8 +6,8 @@ let entries = [];
 let selectedIndex = 0;
 
 async function loadHistory() {
-  if (!window.tlw) return;
-  entries = await window.tlw.getClipboardHistory();
+  if (!window.dikto) return;
+  entries = await window.dikto.getClipboardHistory();
   render();
 }
 
@@ -56,7 +56,7 @@ function render() {
 
   // Load images async
   historyList.querySelectorAll('img[data-filename]').forEach(async img => {
-    const dataUrl = await window.tlw.getClipboardImage(img.dataset.filename);
+    const dataUrl = await window.dikto.getClipboardImage(img.dataset.filename);
     if (dataUrl) img.src = dataUrl;
   });
 
@@ -65,7 +65,7 @@ function render() {
     el.addEventListener('click', () => {
       const idx = parseInt(el.dataset.index);
       const entry = filtered[idx];
-      if (window.tlw) window.tlw.pasteClipboardEntry(entry.type === 'text' ? entry.content : entry.content, entry.type);
+      if (window.dikto) window.dikto.pasteClipboardEntry(entry.type === 'text' ? entry.content : entry.content, entry.type);
     });
   });
 
@@ -92,11 +92,11 @@ document.addEventListener('keydown', (e) => {
   } else if (e.key === 'Enter') {
     e.preventDefault();
     const entry = filtered[selectedIndex];
-    if (entry && window.tlw) {
-      window.tlw.pasteClipboardEntry(entry.type === 'text' ? entry.content : entry.content, entry.type);
+    if (entry && window.dikto) {
+      window.dikto.pasteClipboardEntry(entry.type === 'text' ? entry.content : entry.content, entry.type);
     }
   } else if (e.key === 'Escape') {
-    if (window.tlw) window.tlw.closeClipboard();
+    if (window.dikto) window.dikto.closeClipboard();
   }
 });
 
@@ -135,8 +135,8 @@ function escapeHtml(str) {
 loadHistory();
 
 // Refresh when window becomes visible
-if (window.tlw) {
-  window.tlw.onClipboardShow(() => {
+if (window.dikto) {
+  window.dikto.onClipboardShow(() => {
     selectedIndex = 0;
     searchInput.value = '';
     loadHistory();

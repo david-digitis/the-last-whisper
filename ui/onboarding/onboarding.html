@@ -20,8 +20,8 @@
         <p>Required for correction, translation and email features.</p>
         <input id="apiKey" type="text" placeholder="AIzaSy..." />
         <div class="step-actions">
-          <button class="btn-secondary" onclick="skipApiKey()">Later</button>
-          <button class="btn-primary" onclick="saveApiKey()">Save</button>
+          <button class="btn-secondary" id="btn-skip-api">Later</button>
+          <button class="btn-primary" id="btn-save-api">Save</button>
         </div>
         <div id="apiStatus" class="status"></div>
       </div>
@@ -35,7 +35,7 @@
         <p>Select the microphone you use for dictation.</p>
         <select id="micSelect"></select>
         <div class="step-actions">
-          <button class="btn-primary" onclick="saveMic()">Continue</button>
+          <button class="btn-primary" id="btn-save-mic">Continue</button>
         </div>
       </div>
     </div>
@@ -56,7 +56,7 @@
           </div>
         </div>
         <div class="step-actions">
-          <button class="btn-primary" onclick="finish()">Let's go!</button>
+          <button class="btn-primary" id="btn-finish">Let's go!</button>
         </div>
       </div>
     </div>

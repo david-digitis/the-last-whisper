@@ -14,8 +14,8 @@ function fitWindow() {
 // ─── Load action buttons dynamically ─────────────────────────
 
 async function loadActions() {
-  if (!window.tlw) return;
-  const actions = await window.tlw.getActions();
+  if (!window.dikto) return;
+  const actions = await window.dikto.getActions();
   actionsRow.innerHTML = '';
 
   actions.forEach(a => {
@@ -37,7 +37,7 @@ async function onActionClick(btn, actionId) {
   loadingEl.textContent = 'Gemini...';
 
   try {
-    const result = await window.tlw.sendOverlayAction(sourceText, actionId);
+    const result = await window.dikto.sendOverlayAction(sourceText, actionId);
     resultText = result;
     resultTextEl.textContent = result;
     loadingEl.classList.add('hidden');
@@ -53,8 +53,8 @@ loadActions();
 
 // ─── Receive text from main process ──────────────────────────
 
-if (window.tlw) {
-  window.tlw.onOverlayText((event, text) => {
+if (window.dikto) {
+  window.dikto.onOverlayText((event, text) => {
     sourceText = text;
     sourceTextEl.textContent = text;
     resultAreaEl.classList.add('hidden');
@@ -68,29 +68,29 @@ if (window.tlw) {
 // ─── Close ───────────────────────────────────────────────────
 
 document.getElementById('close-btn').addEventListener('click', () => {
-  if (window.tlw) window.tlw.closeOverlay();
+  if (window.dikto) window.dikto.closeOverlay();
 });
 
 document.getElementById('backdrop').addEventListener('click', (e) => {
   if (e.target === e.currentTarget) {
-    if (window.tlw) window.tlw.closeOverlay();
+    if (window.dikto) window.dikto.closeOverlay();
   }
 });
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && window.tlw) window.tlw.closeOverlay();
+  if (e.key === 'Escape' && window.dikto) window.dikto.closeOverlay();
 });
 
 // ─── Result buttons ──────────────────────────────────────────
 
 document.getElementById('copy-btn').addEventListener('click', () => {
-  if (window.tlw && resultText) {
-    window.tlw.copyToClipboard(resultText);
+  if (window.dikto && resultText) {
+    window.dikto.copyToClipboard(resultText);
   }
 });
 
 document.getElementById('insert-btn').addEventListener('click', () => {
-  if (window.tlw && resultText) {
-    window.tlw.insertText(resultText);
+  if (window.dikto && resultText) {
+    window.dikto.insertText(resultText);
   }
 });

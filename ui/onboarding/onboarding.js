@@ -3,8 +3,8 @@ const micSelect = document.getElementById('micSelect');
 const apiStatus = document.getElementById('apiStatus');
 
 // Populate mic list on load
-if (window.tlw) {
-  window.tlw.onMicList((event, devices) => {
+if (window.dikto) {
+  window.dikto.onMicList((event, devices) => {
     micSelect.innerHTML = '';
     devices.forEach(d => {
       const opt = document.createElement('option');
@@ -31,8 +31,8 @@ function saveApiKey() {
     apiStatus.className = 'status error';
     return;
   }
-  if (window.tlw) {
-    window.tlw.onboardingSaveApiKey(key);
+  if (window.dikto) {
+    window.dikto.onboardingSaveApiKey(key);
   }
   apiStatus.textContent = 'Cle enregistree';
   apiStatus.className = 'status ok';
@@ -45,17 +45,23 @@ function skipApiKey() {
 
 function saveMic() {
   const deviceId = micSelect.value;
-  if (window.tlw && deviceId) {
-    window.tlw.onboardingSaveMic(deviceId);
+  if (window.dikto && deviceId) {
+    window.dikto.onboardingSaveMic(deviceId);
   }
   goToStep(3);
 }
 
 function finish() {
-  if (window.tlw) {
-    window.tlw.onboardingDone();
+  if (window.dikto) {
+    window.dikto.onboardingDone();
   }
 }
+
+// Button event listeners (inline onclick blocked by CSP)
+document.getElementById('btn-save-api').addEventListener('click', saveApiKey);
+document.getElementById('btn-skip-api').addEventListener('click', skipApiKey);
+document.getElementById('btn-save-mic').addEventListener('click', saveMic);
+document.getElementById('btn-finish').addEventListener('click', finish);
 
 // Enter key on API input
 apiKeyInput.addEventListener('keydown', (e) => {

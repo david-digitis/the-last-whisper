@@ -13,8 +13,8 @@ let actionLocked = false;
 // ─── Load action buttons dynamically ─────────────────────────
 
 async function loadActions() {
-  if (!window.tlw) return;
-  const actions = await window.tlw.getActions();
+  if (!window.dikto) return;
+  const actions = await window.dikto.getActions();
   actionsContainer.innerHTML = '';
 
   actions.forEach(a => {
@@ -46,8 +46,8 @@ function onActionClick(e) {
   statusEl.textContent = 'OK — release Ctrl+Space';
   statusEl.classList.remove('hidden');
 
-  if (window.tlw) {
-    window.tlw.sendAction(selectedAction);
+  if (window.dikto) {
+    window.dikto.sendAction(selectedAction);
   }
 }
 
@@ -101,8 +101,8 @@ animate();
 
 // ─── Events from main process ────────────────────────────────
 
-if (window.tlw) {
-  window.tlw.onRecordingStop(() => {
+if (window.dikto) {
+  window.dikto.onRecordingStop(() => {
     if (animationId) {
       cancelAnimationFrame(animationId);
       animationId = null;
@@ -118,7 +118,7 @@ if (window.tlw) {
     actionsContainer.classList.add('hidden');
   });
 
-  window.tlw.onRecordingStart(() => {
+  window.dikto.onRecordingStart(() => {
     selectedAction = null;
     actionLocked = false;
     canvas.style.opacity = '1';

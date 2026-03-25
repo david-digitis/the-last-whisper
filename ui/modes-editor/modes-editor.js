@@ -4,10 +4,10 @@ let editingId = null;
 
 // Close
 document.getElementById('close-btn').addEventListener('click', () => {
-  window.tlw.closeModesEditor();
+  window.dikto.closeModesEditor();
 });
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') window.tlw.closeModesEditor();
+  if (e.key === 'Escape') window.dikto.closeModesEditor();
 });
 
 // Add button
@@ -19,7 +19,7 @@ document.getElementById('add-btn').addEventListener('click', () => {
 });
 
 async function load() {
-  actions = await window.tlw.getCustomActions();
+  actions = await window.dikto.getCustomActions();
   render();
 }
 
@@ -104,7 +104,7 @@ function render() {
 }
 
 async function save() {
-  await window.tlw.saveCustomActions(actions);
+  await window.dikto.saveCustomActions(actions);
   render();
 }
 

@@ -63,6 +63,7 @@ body {
   line-height: 1.5;
   overflow-y: auto;
   flex: 1;
+  min-height: 0;
 }
 
 .actions-row {
@@ -106,6 +107,11 @@ body {
 
 .result-area {
   padding: 0 18px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .result-area.hidden { display: none; }
@@ -119,7 +125,8 @@ body {
   font-size: 13px;
   line-height: 1.6;
   white-space: pre-wrap;
-  max-height: 300px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   margin-bottom: 12px;
 }
@@ -128,6 +135,7 @@ body {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
+  flex-shrink: 0;
 }
 
 .btn-secondary {

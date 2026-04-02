@@ -21,6 +21,10 @@ let nativeLanguage = 'French';
 let targetLanguage = 'English';
 let clipboardHistoryEnabled = false;
 let clipboardMaxEntries = 100;
+let updateStatus = null; // null | 'checking' | 'available' | 'up-to-date' | 'ready' | 'error'
+let updateVersion = null;
+let onCheckForUpdates = null;
+let onQuitAndInstall = null;
 
 const LANGUAGES = ['French', 'English', 'German', 'Spanish', 'Italian', 'Portuguese', 'Dutch'];
 
@@ -123,6 +127,8 @@ function initTray(app, callbacks) {
   onClipboardHistoryToggle = callbacks.onClipboardHistoryToggle;
   onClipboardMaxEntries = callbacks.onClipboardMaxEntries;
   onClipboardClear = callbacks.onClipboardClear;
+  onCheckForUpdates = callbacks.onCheckForUpdates;
+  onQuitAndInstall = callbacks.onQuitAndInstall;
   currentApiKey = callbacks.currentApiKey || '';
   autoCorrectionEnabled = callbacks.autoCorrectionEnabled || false;
   switchThreshold = callbacks.switchThreshold || 10;
@@ -163,7 +169,7 @@ function buildMenu(micDevices) {
     : 'Gemini key: (not configured)';
 
   const contextMenu = Menu.buildFromTemplate([
-    { label: 'Dikto v0.3.0', enabled: false },
+    { label: `Dikto v${appRef.getVersion()}`, enabled: false },
     { type: 'separator' },
     // ─── Transcription ───
     { label: 'Transcription', enabled: false },
@@ -279,6 +285,7 @@ function buildMenu(micDevices) {
       click: () => showApiKeyDialog(),
     },
     { type: 'separator' },
+    getUpdateMenuItem(),
     {
       label: 'Start at login',
       type: 'checkbox',
@@ -360,6 +367,35 @@ function showApiKeyDialog() {
   win.setMenu(null);
 }
 
+function getUpdateMenuItem() {
+  if (updateStatus === 'checking') {
+    return { label: 'Checking for updates...', enabled: false };
+  }
+  if (updateStatus === 'ready') {
+    return {
+      label: `Install update v${updateVersion} & restart`,
+      click: () => { if (onQuitAndInstall) onQuitAndInstall(); }
+    };
+  }
+  if (updateStatus === 'up-to-date') {
+    return { label: 'Up to date', enabled: false };
+  }
+  if (updateStatus === 'error') {
+    return { label: 'Update check failed', enabled: false };
+  }
+  // default: idle or unknown
+  return {
+    label: 'Check for updates',
+    click: () => { if (onCheckForUpdates) onCheckForUpdates(); }
+  };
+}
+
+function setUpdateStatus(status, version) {
+  updateStatus = status;
+  if (version) updateVersion = version;
+  buildMenu(currentMicDevices);
+}
+
 function setApiKeyDisplay(key) {
   currentApiKey = key;
 }
@@ -382,4 +418,4 @@ function setTrayState(state) {
   tray.setToolTip(tooltips[state] || tooltips.idle);
 }
 
-module.exports = { initTray, setTrayState, updateMicList, setApiKeyDisplay };
+module.exports = { initTray, setTrayState, updateMicList, setApiKeyDisplay, setUpdateStatus };

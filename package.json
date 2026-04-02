@@ -1,6 +1,6 @@
 {
   "name": "dikto",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Dictaphone push-to-talk + assistant IA desktop — cross-platform",
   "main": "main.js",
   "author": "Digitis <david@digitis.cloud>",
@@ -21,6 +21,11 @@
     },
     "asar": false,
     "npmRebuild": false,
+    "publish": {
+      "provider": "github",
+      "owner": "david-digitis",
+      "repo": "dikto"
+    },
     "win": {
       "target": [
         "portable",
@@ -63,6 +68,7 @@
     ]
   },
   "dependencies": {
+    "electron-updater": "^6.8.3",
     "sherpa-onnx-node": "^1.12.32",
     "uiohook-napi": "^1.5.5"
   },

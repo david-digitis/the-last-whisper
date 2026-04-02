@@ -68,13 +68,23 @@ window.audioWorker.onStartRecording(async (event, options) => {
     // If a specific deviceId is provided, use it
     if (options && options.deviceId) {
       audioConstraints.deviceId = { exact: options.deviceId };
-      console.log('[AudioWorker] Using device:', options.deviceId);
+      console.log('[AudioWorker] Requesting device:', options.deviceId.substring(0, 16) + '...');
     } else {
       console.log('[AudioWorker] Using default microphone');
     }
 
-    // Request microphone access
-    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraints });
+    // Request microphone access — fallback to default if exact device fails
+    try {
+      mediaStream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraints });
+    } catch (constraintErr) {
+      if (options && options.deviceId && constraintErr.name === 'OverconstrainedError') {
+        console.warn('[AudioWorker] Device ID not found, falling back to default mic');
+        delete audioConstraints.deviceId;
+        mediaStream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraints });
+      } else {
+        throw constraintErr;
+      }
+    }
 
     // Log which track we actually got
     const track = mediaStream.getAudioTracks()[0];

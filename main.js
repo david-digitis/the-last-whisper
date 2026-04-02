@@ -10,7 +10,8 @@ if (process.platform === 'linux') {
   app.commandLine.appendSwitch('no-zygote');
 }
 const { log, error: logError } = require('./src/logger');
-const { initTray, setTrayState, updateMicList } = require('./src/tray');
+const { initTray, setTrayState, updateMicList, setUpdateStatus } = require('./src/tray');
+const { initUpdater, checkForUpdates, quitAndInstall } = require('./src/updater');
 const { initSTT, transcribe, getActiveModelName } = require('./src/stt');
 const { startRecording, stopRecording, setAudioDevice, listAudioDevices } = require('./src/recorder');
 const { pasteText, simulatePaste } = require('./src/paste');
@@ -89,6 +90,8 @@ app.whenReady().then(async () => {
     onClipboardClear: () => {
       clipHistory.clearHistory();
     },
+    onCheckForUpdates: () => checkForUpdates(),
+    onQuitAndInstall: () => quitAndInstall(),
     currentApiKey: config.geminiApiKey || '',
     autoCorrectionEnabled: config.autoCorrection?.enabled || false,
     switchThreshold: config.switchThreshold || 10,
@@ -97,6 +100,13 @@ app.whenReady().then(async () => {
     clipboardHistoryEnabled: config.clipboardHistory?.enabled || false,
     clipboardMaxEntries: config.clipboardHistory?.maxEntries || 100,
   });
+
+  // Auto-updater (only in packaged app, not in dev)
+  if (app.isPackaged) {
+    initUpdater({
+      onStatusChange: (status, version) => setUpdateStatus(status, version),
+    });
+  }
 
   // IPC: Gemini key from dialog
   ipcMain.on('set-gemini-key', (event, key) => {
@@ -114,14 +124,24 @@ app.whenReady().then(async () => {
 
       const config = getConfig();
       const savedDeviceId = config.audioDeviceId;
+      const savedDeviceExists = savedDeviceId && devices.some(d => d.deviceId === savedDeviceId);
+
+      if (savedDeviceId && !savedDeviceExists) {
+        log(`[Dikto] WARNING: Saved mic ID no longer exists (${savedDeviceId.substring(0, 16)}...), clearing`);
+        setAudioDevice(null);
+        setConfigValue('audioDeviceId', '');
+      }
+
       const devicesWithSelection = devices.map(d => ({
         ...d,
-        selected: savedDeviceId ? d.deviceId === savedDeviceId : false,
+        selected: savedDeviceExists ? d.deviceId === savedDeviceId : false,
       }));
 
-      if (savedDeviceId) {
+      if (savedDeviceExists) {
         setAudioDevice(savedDeviceId);
-        log(`[Dikto] Using saved mic: ${devices.find(d => d.deviceId === savedDeviceId)?.label || '?'}`);
+        log(`[Dikto] Using saved mic: ${devices.find(d => d.deviceId === savedDeviceId)?.label}`);
+      } else {
+        log('[Dikto] No saved mic or ID stale — will use system default');
       }
 
       updateMicList(devicesWithSelection);

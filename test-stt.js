@@ -12,7 +12,10 @@
 try {
   const sherpa = require('sherpa-onnx-node');
   console.log('[OK] sherpa-onnx-node loaded successfully');
-  console.log('[INFO] Version:', sherpa.version ? sherpa.version() : 'unknown');
+  const version = typeof sherpa.version === 'function' ? sherpa.version()
+                : typeof sherpa.version === 'string' ? sherpa.version
+                : 'unknown';
+  console.log('[INFO] Version:', version);
   console.log('[INFO] Available exports:', Object.keys(sherpa).join(', '));
 
   // If a model path is provided, try to load it
@@ -89,7 +92,7 @@ try {
     stream.acceptWaveform({ sampleRate, samples });
     recognizer.decode(stream);
 
-    const result = stream.result;
+    const result = recognizer.getResult(stream);
     console.log(`[OK] Transcription pipeline works! Result: "${result.text || '(empty — expected for silence)'}"`);
     console.log('\n=== ALL TESTS PASSED ===');
     console.log('sherpa-onnx-node is fully functional on this machine.');

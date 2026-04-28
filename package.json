@@ -69,7 +69,7 @@
   },
   "dependencies": {
     "electron-updater": "^6.8.3",
-    "sherpa-onnx-node": "^1.12.32",
+    "sherpa-onnx-node": "^1.13.0",
     "uiohook-napi": "^1.5.5"
   },
   "devDependencies": {

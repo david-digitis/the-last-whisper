@@ -462,14 +462,22 @@ function getActiveDisplay() {
   return screen.getDisplayNearestPoint(cursor);
 }
 
-function getBubblePosition() {
+// Bubble : largeur/hauteur dynamiques (le nombre de boutons d'action varie),
+// ancree en bas-centre de l'ecran actif a BUBBLE_BOTTOM_GAP du bord.
+const BUBBLE_MIN_W = 320;
+const BUBBLE_MIN_H = 110;
+const BUBBLE_BOTTOM_GAP = 60;
+
+function getBubblePosition(w = BUBBLE_MIN_W, h = BUBBLE_MIN_H) {
   const display = getActiveDisplay();
   const { x, y, width, height } = display.workArea;
+  const cw = Math.max(BUBBLE_MIN_W, Math.min(Math.round(w) || 0, width - 40));
+  const ch = Math.max(BUBBLE_MIN_H, Math.min(Math.round(h) || 0, height - 40));
   return {
-    width: 320,
-    height: 110,
-    x: x + Math.round(width / 2 - 160),
-    y: y + height - 170,
+    width: cw,
+    height: ch,
+    x: x + Math.round(width / 2 - cw / 2),
+    y: y + height - ch - BUBBLE_BOTTOM_GAP,
   };
 }
 
@@ -615,6 +623,15 @@ ipcMain.on('resize-overlay', (event, width, height) => {
     x: x + Math.round(dw / 2 - w / 2),
     y: y + Math.round(dh / 2 - h / 2),
   });
+});
+
+// Le renderer mesure ses boutons puis demande la taille voulue ; on renvoie la
+// largeur reellement appliquee (clampee a l'ecran) pour qu'il mesure son wrap.
+ipcMain.handle('resize-bubble', (event, width, height) => {
+  if (!bubbleWindow || bubbleWindow.isDestroyed()) return 0;
+  const pos = getBubblePosition(width, height);
+  bubbleWindow.setBounds(pos);
+  return pos.width;
 });
 
 // ─── Clipboard History window ─────────────────────────────────

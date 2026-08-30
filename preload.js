@@ -3,6 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('dikto', {
   // Bubble actions
   sendAction: (action) => ipcRenderer.send('bubble-action', action),
+  resizeBubble: (width, height) => ipcRenderer.invoke('resize-bubble', width, height),
 
   // Overlay actions
   sendOverlayAction: (text, action) => ipcRenderer.invoke('overlay-action', text, action),

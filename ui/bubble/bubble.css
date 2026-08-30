@@ -49,9 +49,11 @@ body {
 /* Action buttons */
 .actions-container {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 6px;
   padding: 6px 0 2px 0;
-  transition: opacity 200ms ease-out, max-height 200ms ease-out;
+  transition: opacity 200ms ease-out;
 }
 
 .actions-container.hidden {
@@ -73,6 +75,7 @@ body {
   cursor: pointer;
   transition: all 120ms ease;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .action-btn:hover {

@@ -12,6 +12,8 @@ let actionLocked = false;
 
 // ─── Load action buttons dynamically ─────────────────────────
 
+let loadPromise = Promise.resolve();
+
 async function loadActions() {
   if (!window.dikto) return;
   const actions = await window.dikto.getActions();
@@ -51,14 +53,42 @@ function onActionClick(e) {
   }
 }
 
-loadActions();
+// ─── Auto-fit de la fenetre au contenu ───────────────────────
+// La fenetre est creee en 320x110 ; avec assez de modes custom les boutons
+// debordaient et etaient clippes. On mesure la rangee reelle puis on demande
+// au main la largeur correspondante (clampee a l'ecran), et enfin la hauteur
+// une fois le wrap eventuel applique.
 
-// Show action buttons after 500ms of recording
-setTimeout(() => {
+const OSCILLO_W = 280;   // largeur du canvas, plancher de contenu
+const BUBBLE_PAD_X = 32; // padding lateral .bubble.expanded + marge de securite
+
+async function fitWindow() {
+  if (!window.dikto || !window.dikto.resizeBubble) return;
+
+  const gap = parseFloat(getComputedStyle(actionsContainer).gap) || 6;
+  const btns = Array.from(actionsContainer.querySelectorAll('.action-btn'));
+  const rowWidth = btns.reduce((sum, b) => sum + b.offsetWidth, 0)
+    + Math.max(0, btns.length - 1) * gap;
+
+  const wanted = Math.ceil(Math.max(OSCILLO_W, rowWidth)) + BUBBLE_PAD_X;
+
+  await window.dikto.resizeBubble(wanted, 0);
+  await new Promise(requestAnimationFrame);
+  await window.dikto.resizeBubble(wanted, bubble.offsetHeight + 8);
+}
+
+async function revealActions() {
+  await loadPromise;
   actionsContainer.classList.remove('hidden');
   bubble.classList.remove('compact');
   bubble.classList.add('expanded');
-}, 500);
+  requestAnimationFrame(() => requestAnimationFrame(fitWindow));
+}
+
+loadPromise = loadActions();
+
+// Show action buttons after 500ms of recording
+setTimeout(revealActions, 500);
 
 // ─── Oscilloscope animation ──────────────────────────────────
 
@@ -125,17 +155,13 @@ if (window.dikto) {
     statusEl.classList.add('hidden');
 
     // Reload actions (may have changed) and reset
-    loadActions();
+    loadPromise = loadActions();
 
     // Restart animation
     if (!animationId) animate();
 
     // Show buttons after 500ms
     actionsContainer.classList.add('hidden');
-    setTimeout(() => {
-      actionsContainer.classList.remove('hidden');
-      bubble.classList.remove('compact');
-      bubble.classList.add('expanded');
-    }, 500);
+    setTimeout(revealActions, 500);
   });
 }

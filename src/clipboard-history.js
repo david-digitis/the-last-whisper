@@ -89,6 +89,15 @@ function poll() {
   }
 }
 
+// Neutralise la detection du prochain contenu : utilise quand Dikto depose
+// lui-meme du texte dans le presse-papier (dictee auto-collee), qui n'a pas a
+// encombrer l'historique. A appeler AVANT clipboard.writeText, sinon le poll
+// (800ms) peut s'intercaler et capturer quand meme.
+function ignoreNextText(text) {
+  lastText = text || '';
+  lastImageHash = ''; // meme reset que poll() lors d'un changement de texte
+}
+
 function addEntry(entry) {
   entry.timestamp = Date.now();
 
@@ -185,4 +194,5 @@ module.exports = {
   clearHistory,
   setMaxEntries,
   addEntry,
+  ignoreNextText,
 };

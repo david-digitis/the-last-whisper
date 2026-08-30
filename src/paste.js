@@ -3,6 +3,7 @@ const { execFile, exec } = require('child_process');
 const { writeFileSync, existsSync } = require('fs');
 const path = require('path');
 const { log } = require('./logger');
+const clipHistory = require('./clipboard-history');
 
 // Pre-create a tiny VBScript for instant Ctrl+V simulation on Windows
 const vbsPath = path.join(__dirname, '..', 'paste.vbs');
@@ -16,6 +17,10 @@ const isWayland = process.platform === 'linux' &&
 
 async function pasteText(text) {
   if (!text || text.trim().length === 0) return;
+
+  // La dictee est collee dans la foulee : l'empiler dans l'historique du
+  // presse-papier ne sert a rien et noie les vraies copies de l'utilisateur.
+  clipHistory.ignoreNextText(text);
 
   clipboard.writeText(text);
   log(`[Paste] Clipboard set (${text.length} chars)`);

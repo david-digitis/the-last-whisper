@@ -18,7 +18,7 @@ const { pasteText, simulatePaste } = require('./src/paste');
 const { loadConfig, getConfig } = require('./src/config');
 const { playStart, playDone, playError } = require('./src/sounds');
 const clipHistory = require('./src/clipboard-history');
-const { muteForRecording, unmuteAfterRecording } = require('./src/audio-mute');
+const { muteForRecording, unmuteAfterRecording, restorePendingMute } = require('./src/audio-mute');
 
 // Linux: use evdev for hotkeys (uiohook doesn't work under Wayland)
 const isLinux = process.platform === 'linux';
@@ -45,6 +45,7 @@ if (!gotTheLock) {
 
 app.whenReady().then(async () => {
   await loadConfig();
+  restorePendingMute(); // filet de securite si un crash a laisse le son coupe
 
   const config = getConfig();
   try {
@@ -1003,6 +1004,7 @@ ipcMain.handle('delete-model', async (event, modelId) => {
 // ─── App lifecycle ────────────────────────────────────────────
 
 app.on('will-quit', () => {
+  unmuteAfterRecording(); // ne jamais quitter en laissant le son coupe
   if (!isLinux && uIOhook) uIOhook.stop();
   globalShortcut.unregisterAll();
 });
